@@ -28,6 +28,14 @@ void main() {
     expect(find.text('8 / 0 = Error'), findsOneWidget);
   });
 
+  testWidgets('squares the current expression', (tester) async {
+    await tester.pumpWidget(const CalculatorApp());
+
+    await tapSequence(tester, '5 x²');
+
+    expect(find.text('25'), findsOneWidget);
+  });
+
   testWidgets('clear resets the accumulator display', (tester) async {
     await tester.pumpWidget(const CalculatorApp());
 

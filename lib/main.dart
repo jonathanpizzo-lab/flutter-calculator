@@ -36,6 +36,7 @@ class _CalculatorPageState extends State<CalculatorPage> {
     ['4', '5', '6', '*'],
     ['1', '2', '3', '-'],
     ['C', '0', '=', '+'],
+    ['x²'],
   ];
 
   final List<String> _tokens = [];
@@ -51,6 +52,8 @@ class _CalculatorPageState extends State<CalculatorPage> {
         _clear();
       } else if (value == '=') {
         _calculate();
+      } else if (value == 'x²') {
+        _square();
       } else if (_isOperator(value)) {
         _addOperator(value);
       } else {
@@ -103,6 +106,28 @@ class _CalculatorPageState extends State<CalculatorPage> {
         throw const FormatException('The result is not a finite number.');
       }
       _display = '$expression = ${_formatResult(value)}';
+      _showingResult = true;
+    } on Object {
+      _display = '$_expression = Error';
+      _showingResult = true;
+    }
+  }
+
+  void _square() {
+    if (_tokens.isEmpty || _isOperator(_tokens.last)) return;
+    try {
+      final parsed = Expression.parse(_tokens.join(' '));
+      final value = const ExpressionEvaluator().eval(parsed, {});
+      if (value is! num || !value.isFinite) {
+        throw const FormatException('The result is not a finite number.');
+      }
+      final squared = value * value;
+      final result = _formatResult(squared);
+      _tokens
+        ..clear()
+        ..add(result);
+      _expression = result;
+      _display = result;
       _showingResult = true;
     } on Object {
       _display = '$_expression = Error';
